@@ -52,6 +52,25 @@ src/main/java/br/com/locadora
 
 **DIP**: `ReservaService` e `PagamentoService` dependem apenas de interfaces recebidas pelo construtor. Os objetos concretos são criados somente no `Main`.
 
+## Decisões de projeto
+
+### Uso de `new` para entidades dentro dos serviços
+
+Onde acontece:
+
+* `ReservaService.java`, linha 30: `new Reserva(...)`
+* `PagamentoService.java`, linha 32: `new Pagamento(...)`
+
+O DIP proíbe que o serviço crie suas dependências, como repositórios, métodos de pagamento e canais de notificação. Essas dependências chegam pelo construtor como interfaces e são criadas apenas no `Main`. `Reserva` e `Pagamento` são entidades de domínio, ou seja, o resultado do fluxo, e não detalhes de implementação que precisam ser trocados. Por isso não faz sentido criar uma abstração para elas.
+
+### Uso de `if (aprovado)` no `PagamentoService`
+
+Onde acontece:
+
+* `PagamentoService.java`, linhas 35 a 38
+
+O OCP proíbe desvios que inspecionam o tipo da classe, como verificar com `instanceof` se o pagamento é Pix ou cartão. Nesse caso, o `if` apenas verifica o resultado do pagamento (aprovado ou recusado), que é uma regra de negócio fixa: pagamento aprovado confirma a reserva e pagamento recusado cancela. O serviço não sabe qual método de pagamento foi utilizado, então adicionar uma nova forma de pagamento não exige nenhuma alteração nele.
+
 ## Exemplo de extensão
 
 Para adicionar pagamento por boleto, basta criar a classe abaixo e usá-la no `Main`:
