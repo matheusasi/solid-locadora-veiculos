@@ -14,11 +14,4 @@ public class PagamentoRepositoryEmMemoria implements PagamentoRepository {
     public void salvar(Pagamento pagamento) {
         pagamentos.add(pagamento);
     }
-
-    @Override
-    public List<Pagamento> buscarPorReserva(String reservaId) {
-        return pagamentos.stream()
-                .filter(p -> p.getReservaId().equals(reservaId))
-                .toList();
-    }
 }
